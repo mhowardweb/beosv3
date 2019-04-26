@@ -1,3 +1,3 @@
-# Quasar App
+# BEOS App
 
-> WIP
+Gets rainfall details from BEOS Blockchain.
