@@ -1,41 +1,5 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable max-len */
 <template>
   <q-page class="flex flex-center">
-    <q-btn
-      color="primary"
-      icon="check"
-      label="update"
-      @click="rankings"
-    />
-    <div class="q-pa-md">
-      <q-markup-table>
-        <thead class="bg-teal">
-          <tr>
-            <th colspan="4">
-              <div class="text-h4 q-ml-md text-white">BEOS Rankings</div>
-            </th>
-          </tr>
-          <tr>
-            <th class="text-left">Ranking</th>
-            <th class="text-left">Account</th>
-            <th class="text-right">Balance (BEOS)</th>
-            <th class="text-right">Balance (BTS)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in rankings"
-            :key="item.account"
-          >
-            <td class="text-left">{{item.ranking}}</td>
-            <td class="text-left">{{item.account}}</td>
-            <td class="text-left">{{item.balance}}</td>
-            <td class="text-left">{{item.bts}}</td>
-          </tr>
-        </tbody>
-      </q-markup-table>
-    </div>
     <div class="q-ma-md">
       <q-card
         dark
@@ -67,22 +31,18 @@
   </q-page>
 </template>
 
-<style>
-</style>
-
 <script>
 import { mapGetters } from 'vuex';
 
 export default {
-  name: 'PageIndex',
+  name: 'History',
   data() {
     return {
-      topFifty: [],
       pagination: {
         sortBy: 'balance',
         descending: true,
         page: 1,
-        rowsPerPage: 10,
+        rowsPerPage: 20,
       },
       columns: [
         {
@@ -116,38 +76,10 @@ export default {
       ],
     };
   },
-  created() {
-    this.$axios
-      .post('https://api.beos.world:443/v1/chain/get_table_by_scope', {
-        code: 'eosio.token',
-        table: 'accounts',
-        limit: -1,
-      })
-      .then((res) => {
-        const acc = res.data.rows.map(data => data.scope);
-        // Find and remove item from an array
-        const i = acc.indexOf('eosio.ram');
-        if (i !== -1) {
-          acc.splice(i, 1);
-        }
-        const j = acc.indexOf('eosio.stake');
-        if (j !== -1) {
-          acc.splice(j, 1);
-        }
-        const k = acc.indexOf('beos.gateway');
-        if (k !== -1) {
-          acc.splice(k, 1);
-        }
-        this.$store.dispatch('beosStore/updateBeosAccounts', acc);
-        this.extracted = acc;
-      })
-      .catch(error => console.log(error));
-  },
   methods: {
-    rankings() {
-      const data = this.$store.beos.allBalances;
-      const sortBy = 'balance';
-      const descending = true;
+    customSort(rows, sortBy, descending) {
+      const data = [...rows];
+
       if (sortBy) {
         data.sort((a, b) => {
           const x = descending ? b : a;
@@ -161,15 +93,8 @@ export default {
           return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
         });
       }
-      for (let i = 0; i < 50; i = +1) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.topfifty.push({
-          ranking: i + 1,
-          account: data[i].account,
-          balance: data[i].balance,
-          bts: data[i].bts,
-        });
-      }
+
+      return data;
     },
   },
   computed: {
