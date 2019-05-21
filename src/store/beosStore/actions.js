@@ -18,7 +18,7 @@ export function updateAllBalances({ commit }, data) {
   commit('updateAllBal', data);
 }
 
-export function loadDataAction({ commit }, data) {
+export function loadData({ commit }, data) {
   commit('loadData', data);
 }
 

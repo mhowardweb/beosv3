@@ -1,5 +1,5 @@
 export default {
-  beos: {
+  data: {
     account: [],
     beosAccounts: [],
     beosBalances: [],

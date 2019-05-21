@@ -1,7 +1,6 @@
 <template>
-  <q-page class="flex flex-center">
-    <div class="q-pa-md">
-      <q-stepper
+  <q-page class="q-ma-md">
+        <q-stepper
         v-model="step"
         ref="stepper"
         alternative-labels
@@ -77,11 +76,11 @@
           />
         </q-step>
       </q-stepper>
-    </div>
-    <q-btn
-      color="primary"
+     <q-btn
+      color="secondary"
       icon="save"
       label="Save Snapshot Data"
+      class="full-width q-mt-lg"
       @click="download"
     />
   </q-page>
@@ -96,6 +95,33 @@ export default {
     return {
       step: 1,
     };
+  },
+  created() {
+    this.$axios
+      .post('https://api.beos.world:443/v1/chain/get_table_by_scope', {
+        code: 'eosio.token',
+        table: 'accounts',
+        limit: -1,
+      })
+      .then((res) => {
+        const acc = res.data.rows.map(data => data.scope);
+        // Find and remove item from an array
+        const i = acc.indexOf('eosio.ram');
+        if (i !== -1) {
+          acc.splice(i, 1);
+        }
+        const j = acc.indexOf('eosio.stake');
+        if (j !== -1) {
+          acc.splice(j, 1);
+        }
+        const k = acc.indexOf('beos.gateway');
+        if (k !== -1) {
+          acc.splice(k, 1);
+        }
+        this.$store.dispatch('beosStore/updateBeosAccounts', acc);
+        this.extracted = acc;
+      })
+      .catch(error => console.log(error));
   },
   methods: {
     download() {
@@ -118,7 +144,7 @@ export default {
             type: 'text/plain',
           });
           a.href = URL.createObjectURL(file);
-          a.download = `${data} ${new Date()}.txt`;
+          a.download = `${data} ${new Date()}.json`;
           a.click();
         });
     },
@@ -126,9 +152,9 @@ export default {
       const beosData = [];
       let i = 0;
       this.$q.loading.show({
-        message: `Getting Balances for acount ${i + 1} of ${
+        message: `Getting Balances for ${
           this.beosAccs.length
-        }...`,
+        } accounts, Please be patient !! ....`,
       });
 
       for (i = 0; i < this.beosAccs.length;) {
@@ -158,8 +184,9 @@ export default {
       const btsData = [];
       let i = 0;
       this.$q.loading.show({
-        message: `We are retreiving the BTS Balance data for account ${i
-          + 1} of ${this.beosAccs.length}.`,
+        message: `We are retreiving the BTS Balance data for ${
+          this.beosAccs.length
+        } accounts.`,
       });
       for (i = 0; i < this.beosAccs.length;) {
         // eslint-disable-next-line no-await-in-loop
@@ -193,6 +220,7 @@ export default {
     },
     calcDistribution() {
       this.$store.dispatch('beosStore/updateBeosDist');
+      this.$q.notify('Distribution has been calculated');
       this.$refs.stepper.next();
     },
   },

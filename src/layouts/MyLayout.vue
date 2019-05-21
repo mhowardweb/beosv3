@@ -1,56 +1,58 @@
 <template>
   <q-layout
-    view="hHh Lpr lff"
+    view="hHh lpR fFf"
     class="shadow-2 rounded-borders"
   >
     <q-header
       elevated
-      class="bg-black"
+      class="bg-primary"
     >
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          icon="menu"
-        />
-
         <q-toolbar-title>
           BEOS Rainfall Summary
         </q-toolbar-title>
 
-        <div>v1.0.0</div>
+        <div>v1.0.0 alpha</div>
       </q-toolbar>
     </q-header>
+
+    <q-footer>
+      <q-tabs>
+        <q-route-tab
+          v-for="(nav, index) in navs"
+          :key="index"
+          :icon="nav.icon"
+          :label="nav.label"
+          :to="nav.to"
+        />
+      </q-tabs>
+    </q-footer>
 
     <q-drawer
       v-model="leftDrawerOpen"
       bordered
+      :breakpoint="747"
       :width="200"
-      :breakpoint="500"
-      show-if-above
-      content-class="bg-grey-3"
+      content-class="bg-primary"
     >
-      <q-scroll-area class="fit">
-        <q-list
-          v-for="(menuItem, index) in menuList"
+      <q-list dark>
+        <q-item
+          v-for="(nav, index) in navs"
           :key="index"
+          clickable
+          class="text-grey-4"
+          :to="nav.to"
+          exact
         >
-          <q-item
-            clickable
-            :to="menuItem.link"
-          >
-            <q-item-section avatar>
-              <q-icon :name="menuItem.icon" />
-            </q-item-section>
-            <q-item-section>
-              {{menuItem.label}}
-            </q-item-section>
-          </q-item>
+          <q-item-section avatar>
+            <q-icon :name="nav.icon" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ nav.label }}</q-item-label>
+          </q-item-section>
           <q-separator />
-        </q-list>
-      </q-scroll-area>
+        </q-item>
+      </q-list>
     </q-drawer>
 
     <q-page-container>
@@ -60,28 +62,33 @@
 </template>
 
 <script>
-import { openURL } from 'quasar';
-
 export default {
   name: 'MyLayout',
   data() {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop,
-      menuList: [
-        { icon: 'ion-rainy', label: 'Summary', link: '/' },
-        { icon: 'history', label: 'History', link: 'history' },
-        { icon: 'ion-reverse-camera', label: 'Snapshots', link: 'snapshots' },
+      navs: [
+        { icon: 'ion-rainy', label: 'Summary', to: '/' },
+        { icon: 'history', label: 'History', to: 'history' },
+        { icon: 'ion-reverse-camera', label: 'Snapshots', to: 'snapshots' },
       ],
     };
   },
-  methods: {
-    openURL,
-  },
-  created() {
-    this.$store.dispatch('beosStore/loadDataAction');
-  },
+  methods: {},
 };
 </script>
 
-<style>
+<style lang="scss">
+@media screen and (min-width: 768px) {
+  .q-footer {
+    display: none;
+  }
+}
+
+.q-drawer {
+  .q-router-link--exact-active {
+    color: white !important;
+    background-color: #2a5375;
+  }
+}
 </style>

@@ -1,69 +1,67 @@
-/* eslint-disable comma-dangle */
-/* eslint-disable max-len */
 <template>
-  <q-page class="flex flex-center">
-    <q-btn
-      color="primary"
-      icon="check"
-      label="update"
-      @click="rankings"
-    />
-    <div class="q-pa-md">
-      <q-markup-table>
-        <thead class="bg-teal">
-          <tr>
-            <th colspan="4">
-              <div class="text-h4 q-ml-md text-white">BEOS Rankings</div>
-            </th>
-          </tr>
-          <tr>
-            <th class="text-left">Ranking</th>
-            <th class="text-left">Account</th>
-            <th class="text-right">Balance (BEOS)</th>
-            <th class="text-right">Balance (BTS)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in rankings"
-            :key="item.account"
-          >
-            <td class="text-left">{{item.ranking}}</td>
-            <td class="text-left">{{item.account}}</td>
-            <td class="text-left">{{item.balance}}</td>
-            <td class="text-left">{{item.bts}}</td>
-          </tr>
-        </tbody>
-      </q-markup-table>
-    </div>
-    <div class="q-ma-md">
-      <q-card
-        dark
-        bordered
-        class="bg-grey-9 my-card"
-      >
-        <q-card-section>
-          <div class="text-h6">BEOS Distributed via Rainfall</div>
-          <div class="text-h6">
-            {{dist.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}}
-          </div>
-        </q-card-section>
-        <q-card-section>
-          Snapshot Date: {{snapshot}}
-        </q-card-section>
-      </q-card>
-      <div class="q-mt-md">
-        <q-table
-          title="BEOS Balances"
-          :data="myData"
-          :columns="columns"
-          row-key="name"
-          :sort-method="customSort"
-          binary-state-sort
-          :pagination.sync="pagination"
+  <q-page class="q-ma-md">
+    <q-card>
+      <q-card-section>
+        <q-select
+          outlined
+          v-model="selected"
+          :options="options"
+          label="Select a Snapshot"
         />
-      </div>
+        <q-btn
+          :disabled="!selected"
+          color="red-4"
+          icon="check"
+          label="load data"
+          @click="getData"
+          class="full-width q-mt-md"
+        />
+      </q-card-section>
+    </q-card>
+    <div class="q-ma-lg">
+      <vc-donut
+        background="white"
+        foreground="grey"
+        :size="250"
+        unit="px"
+        :thickness="50"
+        has-legend
+        legend-placement="top"
+        :sections="sections"
+        :total="100"
+        :start-angle="0"
+      >BEOS</vc-donut>
+
     </div>
+    <q-markup-table dense>
+      <thead class="bg-teal">
+        <tr>
+          <th colspan="4">
+            <div class="text-h4 q-ml-md text-white">BEOS Rankings</div>
+            <div class="text-white">Snapshot Date: {{snapshotDate}} GMT</div>
+          </th>
+        </tr>
+        <tr>
+          <th class="text-left text-white">Ranking</th>
+          <th class="text-left text-white">Account</th>
+          <th class="text-left text-white">Balance (BEOS)</th>
+          <th class=" q-mr-sm text-left text-white">Balance (BTS)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="(item, index) in topFifty"
+          :key="index"
+        >
+          <td class="text-left">{{index + 1}}</td>
+          <td class="text-left">{{item.account}}</td>
+          <td class="text-left">
+            {{item.balance.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),}}</td>
+          <td class="text-left">
+            {{parseInt(item.bts).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}}</td>
+        </tr>
+      </tbody>
+    </q-markup-table>
   </q-page>
 </template>
 
@@ -72,112 +70,52 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { date } from 'quasar';
 
 export default {
   name: 'PageIndex',
   data() {
     return {
-      topFifty: [],
-      pagination: {
-        sortBy: 'balance',
-        descending: true,
-        page: 1,
-        rowsPerPage: 10,
-      },
-      columns: [
-        {
-          name: 'account',
-          required: true,
-          label: 'Account',
-          align: 'left',
-          field: 'account',
-          sortable: true,
-        },
-        {
-          name: 'balance',
-          align: 'left',
-          label: 'Balance (BEOS)',
-          field: row => row.balance.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'),
-          sortable: true,
-        },
-        {
-          name: 'bts',
-          align: 'left',
-          label: 'Balance (BTS)',
-          field: 'bts',
-          sortable: true,
-        },
-        {
-          name: 'dist',
-          align: 'center',
-          label: '% of Distributed BEOS',
-          field: row => parseFloat((row.balance / this.dist) * 100).toFixed(4),
-        },
+      sections: [
+        { label: '', value: 25 },
+        { label: 'Green section', value: 25 },
+        { label: 'Blue section', value: 25 },
       ],
+      options: null,
+      selected: null,
     };
-  },
-  created() {
-    this.$axios
-      .post('https://api.beos.world:443/v1/chain/get_table_by_scope', {
-        code: 'eosio.token',
-        table: 'accounts',
-        limit: -1,
-      })
-      .then((res) => {
-        const acc = res.data.rows.map(data => data.scope);
-        // Find and remove item from an array
-        const i = acc.indexOf('eosio.ram');
-        if (i !== -1) {
-          acc.splice(i, 1);
-        }
-        const j = acc.indexOf('eosio.stake');
-        if (j !== -1) {
-          acc.splice(j, 1);
-        }
-        const k = acc.indexOf('beos.gateway');
-        if (k !== -1) {
-          acc.splice(k, 1);
-        }
-        this.$store.dispatch('beosStore/updateBeosAccounts', acc);
-        this.extracted = acc;
-      })
-      .catch(error => console.log(error));
-  },
-  methods: {
-    rankings() {
-      const data = this.$store.beos.allBalances;
-      const sortBy = 'balance';
-      const descending = true;
-      if (sortBy) {
-        data.sort((a, b) => {
-          const x = descending ? b : a;
-          const y = descending ? a : b;
-          if (sortBy === 'name') {
-            // string sort
-            // eslint-disable-next-line no-nested-ternary
-            return x[sortBy] > y[sortBy] ? 1 : x[sortBy] < y[sortBy] ? -1 : 0;
-          }
-          // numeric sort
-          return parseFloat(x[sortBy]) - parseFloat(y[sortBy]);
-        });
-      }
-      for (let i = 0; i < 50; i = +1) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.topfifty.push({
-          ranking: i + 1,
-          account: data[i].account,
-          balance: data[i].balance,
-          bts: data[i].bts,
-        });
-      }
-    },
   },
   computed: {
     ...mapGetters({
-      myData: 'beosStore/getAllBalances',
-      dist: 'beosStore/getBeosBalancesTotal',
       snapshot: 'beosStore/getSnapshotDate',
+      topFifty: 'beosStore/getTopFifty',
     }),
+    snapshotDate() {
+      return date.formatDate(this.snapshot, 'DD-MM-YYYY@HH:mm ZZ');
+    },
+  },
+  methods: {
+    getData() {
+      this.$axios
+        .get(`../data/${this.selected.value}`)
+        .then((res) => {
+          const { data } = res;
+          this.$store.dispatch('beosStore/loadData', data);
+          this.$q.notify('Data has been loaded');
+        })
+        .catch((error) => {
+          console.log(error);
+          this.$q.notify('Data failed to Load', error);
+        });
+    },
+  },
+  mounted() {
+    this.$axios
+      .get('../data/index.json')
+      .then((res) => {
+        this.options = res.data.options;
+      })
+      .catch(error => console.log(error));
   },
 };
 </script>
