@@ -1,0 +1,34 @@
+type Snapshot {
+  _id: ID
+  beosAccounts: [String]!
+  allBalances: [Balance]!
+  beosBalances: [BeosBalance]!
+  btsBalances: [BtsBalance]!
+  beosDistributed: Int!
+  snapshotDate: String!
+  numberAccounts: Int!
+}
+
+type Balance {
+  _id: ID
+  account: String!
+  balance: String!
+  bts: String!
+}
+
+type BeosBalance {
+  _id: ID
+  account: String!
+  balance: String!
+}
+
+type BtsBalance {
+  _id: ID
+  account: String!
+  bts: String!
+}
+
+type Query {
+  getSnapshots: [Snapshot]
+  getSnapshot(snapshotId: ID!): Snapshot!
+}
