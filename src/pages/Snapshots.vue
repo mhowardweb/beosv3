@@ -1,82 +1,82 @@
 <template>
   <q-page class="q-ma-md">
-        <q-stepper
-        v-model="step"
-        ref="stepper"
-        alternative-labels
-        done-color="deep-orange"
-        active-color="purple"
-        inactive-color="secondary"
-        animated
+    <q-stepper
+      v-model="step"
+      ref="stepper"
+      alternative-labels
+      done-color="deep-orange"
+      active-color="purple"
+      inactive-color="secondary"
+      animated
+    >
+      <q-step
+        :name="1"
+        title="Get BEOS Balances"
+        icon="account_balance"
+        :done="step > 1"
+        class="text-center"
       >
-        <q-step
-          :name="1"
-          title="Get BEOS Balances"
-          icon="account_balance"
-          :done="step > 1"
-          class="text-center"
-        >
-          Click on the button to download the BEOS balances for ALL accounts.
-          <q-btn
-            class="q-mt-md"
-            color="red"
-            icon="ion-cloud-download"
-            label="download beos balances"
-            @click="beosBalances"
-          />
-        </q-step>
+        Click on the button to download the BEOS balances for ALL accounts.
+        <q-btn
+          class="q-mt-md"
+          color="red"
+          icon="ion-cloud-download"
+          label="download beos balances"
+          @click="beosBalances"
+        />
+      </q-step>
 
-        <q-step
-          :name="2"
-          title="Get BTS Balances"
-          icon="account_balance_wallet"
-          :done="step > 2"
-          class="text-center"
-        >
-          Click on the button to download the BTS balances for ALL accounts.
-          <q-btn
-            class="q-mt-md"
-            color="green"
-            icon="ion-cloud-download"
-            label="download bts balances"
-            @click="btsBalances"
-          />
-        </q-step>
+      <q-step
+        :name="2"
+        title="Get BTS Balances"
+        icon="account_balance_wallet"
+        :done="step > 2"
+        class="text-center"
+      >
+        Click on the button to download the BTS balances for ALL accounts.
+        <q-btn
+          class="q-mt-md"
+          color="green"
+          icon="ion-cloud-download"
+          label="download bts balances"
+          @click="btsBalances"
+        />
+      </q-step>
 
-        <q-step
-          :name="3"
-          title="Merge Balance Data"
+      <q-step
+        :name="3"
+        title="Merge Balance Data"
+        icon="ion-git-merge"
+        :done="step > 3"
+        class="text-center"
+      >
+        Click on the button to MERGE the BEOS and BTS account balance data.
+        <q-btn
+          class="q-mt-md"
+          color="blue"
           icon="ion-git-merge"
-          :done="step > 3"
-          class="text-center"
-        >
-          Click on the button to MERGE the BEOS and BTS account balance data.
-          <q-btn
-            class="q-mt-md"
-            color="blue"
-            icon="ion-git-merge"
-            label="merge balance data"
-            @click="mergeBalances"
-          />
-        </q-step>
+          label="merge balance data"
+          @click="mergeBalances"
+        />
+      </q-step>
 
-        <q-step
-          :name="4"
-          title="Calculate Distribution "
+      <q-step
+        :name="4"
+        title="Calculate Distribution "
+        icon="ion-calculator"
+        class="text-center"
+      >
+        Click on the button to calculate the distribution of BEOS rainfall.
+        <q-btn
+          class="q-mt-md"
+          color="orange"
           icon="ion-calculator"
-          class="text-center"
-        >
-          Click on the button to calculate the distribution of BEOS rainfall.
-          <q-btn
-            class="q-mt-md"
-            color="orange"
-            icon="ion-calculator"
-            label="calculate distribution"
-            @click="calcDistribution"
-          />
-        </q-step>
-      </q-stepper>
-     <q-btn
+          label="calculate distribution"
+          @click="calcDistribution"
+        />
+      </q-step>
+    </q-stepper>
+    <q-btn
       color="secondary"
       icon="save"
       label="Save Snapshot Data"
@@ -94,6 +94,7 @@ export default {
   data() {
     return {
       step: 1,
+      option: null,
     };
   },
   created() {

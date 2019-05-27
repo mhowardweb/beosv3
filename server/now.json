@@ -1,0 +1,7 @@
+{
+  "name": "BEOS-Server",
+  "version": 2,
+  "alias": "beos-server.now.sh",
+  "builds": [{ "src": "server.js", "use": "@now/node" }],
+  "routes": [{ "src": "/.*", "dest": "server.js" }]
+}

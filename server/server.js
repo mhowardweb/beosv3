@@ -9,7 +9,7 @@ const typeDefs = fs.readFileSync(filePath, 'utf-8');
 const resolvers = require('./resolvers');
 
 // Import Environment Variables and Mongoose Models
-require('dotenv').config({ path: 'variables.env' });
+require('dotenv').config();
 const Snapshot = require('./models/Snapshot');
 
 // Connect to MLab Database
@@ -22,6 +22,11 @@ mongoose
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  engine: {
+    apiKey: process.env.ENGINE_API_KEY,
+  },
+  // introspection: true,
+  // playground: true,
   formatError: error => ({
     name: error.name,
     message: error.message.replace('Context creation failed:', ''),

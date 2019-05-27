@@ -4,7 +4,7 @@ module.exports = function (ctx) {
   return {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
-    boot: ['axios'],
+    boot: ['axios', 'apollo-client'],
 
     css: ['app.styl'],
 

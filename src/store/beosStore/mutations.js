@@ -15,6 +15,18 @@ export function updateSnapshotDate(state, data) {
   state.data.snapshotDate = data;
 }
 
+export function setSnapshots(state, payload) {
+  state.snapshots = payload;
+}
+
+export function setSnapshot(state, payload) {
+  state.snapshot = payload;
+}
+
+export function setLoading(state, payload) {
+  state.loading = payload;
+}
+
 export function updateAllBal(state) {
   // eslint-disable-next-line max-len
   const merged = state.data.beosBalances.map(v => Object.assign({}, v, state.data.btsBalances.find(m => m.account === v.account)));

@@ -54,6 +54,10 @@ const SnapshotSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  snapshotName: {
+    type: String,
+    required: true,
+  },
   numberAccounts: {
     type: Number,
     required: true,

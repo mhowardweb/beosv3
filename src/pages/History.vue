@@ -4,6 +4,19 @@
       <q-card
         dark
         bordered
+        class="col bg-purple-9 q-mb-md"
+      >
+        <q-card-section>
+          <div class="text-h6 text-center">Snapshot Date</div>
+          <div class="text-h6 text-center">
+            {{snapshotDate}} GMT
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <q-card
+        dark
+        bordered
         class="col bg-green-9 q-mb-md"
       >
         <q-card-section>
@@ -17,7 +30,7 @@
       <q-card
         dark
         bordered
-        class="bg-orange-9"
+        class="bg-orange-9 q-mb-md"
       >
         <q-card-section>
           <div class="text-h6 text-center">Total BEOS Accounts</div>
@@ -26,10 +39,23 @@
           </div>
         </q-card-section>
       </q-card>
+
+      <q-card
+        dark
+        bordered
+        class="bg-yellow-9"
+      >
+        <q-card-section>
+          <div class="text-h6 text-center">BEOS Accounts with less than 50 BEOS</div>
+          <div class="text-h4 text-center">
+            {{low}}
+          </div>
+        </q-card-section>
+      </q-card>
+
     </div>
     <div class="q-mt-md">
       <q-table
-        :title="`Snapshot Date: ${snapshotDate} GMT`"
         :data="myData"
         :columns="columns"
         row-key="name"
@@ -116,6 +142,7 @@ export default {
       dist: 'beosStore/getBeosBalancesTotal',
       snapshot: 'beosStore/getSnapshotDate',
       totalAcc: 'beosStore/getBeosAccountsTotal',
+      low: 'beosStore/getLowBalances',
     }),
     snapshotDate() {
       return date.formatDate(this.snapshot, 'DD-MM-YYYY@HH:mm ZZ');

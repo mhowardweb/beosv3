@@ -6,6 +6,7 @@ type Snapshot {
   btsBalances: [BtsBalance]!
   beosDistributed: Int!
   snapshotDate: String!
+  snapshotName: String!
   numberAccounts: Int!
 }
 
@@ -13,7 +14,7 @@ type Balance {
   _id: ID
   account: String!
   balance: String!
-  bts: String!
+  bts: String
 }
 
 type BeosBalance {
@@ -30,5 +31,5 @@ type BtsBalance {
 
 type Query {
   getSnapshots: [Snapshot]
-  getSnapshot(snapshotId: ID!): Snapshot!
+  getSnapshot(snapshotId: ID!): Snapshot
 }

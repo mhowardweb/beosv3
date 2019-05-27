@@ -4,48 +4,49 @@
       <q-card-section>
         <q-select
           outlined
-          v-model="selected"
-          :options="options"
+          v-model="selectedSnapshot"
+          :options="snapshotOptions"
           label="Select a Snapshot"
         />
         <q-btn
-          :disabled="!selected"
+          :disabled="!selectedSnapshot"
           color="red-4"
           icon="check"
           label="load data"
-          @click="getData"
+          @click="getDataS"
           class="full-width q-mt-md"
         />
       </q-card-section>
     </q-card>
+
     <div class="q-ma-lg">
       <vc-donut
         background="white"
         foreground="grey"
         :size="250"
         unit="px"
-        :thickness="50"
+        :thickness="30"
         has-legend
-        legend-placement="top"
-        :sections="sections"
+        legend-placement="bottom"
+        :sections="donutData"
         :total="100"
         :start-angle="0"
-      >BEOS</vc-donut>
+      >BEOS Top 15</vc-donut>
 
     </div>
     <q-markup-table dense>
-      <thead class="bg-teal">
+      <thead class="">
         <tr>
           <th colspan="4">
-            <div class="text-h4 q-ml-md text-white">BEOS Rankings</div>
-            <div class="text-white">Snapshot Date: {{snapshotDate}} GMT</div>
+            <div class="text-h5 q-ml-md">BEOS Rankings</div>
+            <div class="text-h7 q-mt-md text-center">Snapshot Date: {{snapshotDate}} GMT</div>
           </th>
         </tr>
         <tr>
-          <th class="text-left text-white">Ranking</th>
-          <th class="text-left text-white">Account</th>
-          <th class="text-left text-white">Balance (BEOS)</th>
-          <th class=" q-mr-sm text-left text-white">Balance (BTS)</th>
+          <th class="text-left">Ranking</th>
+          <th class="text-left">Account</th>
+          <th class="text-left">Balance (BEOS)</th>
+          <th class=" q-mr-sm text-left">Balance (BTS)</th>
         </tr>
       </thead>
       <tbody>
@@ -76,46 +77,55 @@ export default {
   name: 'PageIndex',
   data() {
     return {
-      sections: [
-        { label: '', value: 25 },
-        { label: 'Green section', value: 25 },
-        { label: 'Blue section', value: 25 },
-      ],
-      options: null,
       selected: null,
+      selectedSnapshot: null,
     };
   },
   computed: {
     ...mapGetters({
       snapshot: 'beosStore/getSnapshotDate',
       topFifty: 'beosStore/getTopFifty',
+      snapshotOptions: 'beosStore/getSnapshots',
+      sections: 'beosStore/getDonut',
     }),
+    donutData() {
+      return this.sections || { label: 'start', value: '0' };
+    },
     snapshotDate() {
       return date.formatDate(this.snapshot, 'DD-MM-YYYY@HH:mm ZZ');
     },
   },
   methods: {
+    getDataS() {
+      this.$store.dispatch('beosStore/getSnapshot', this.selectedSnapshot);
+      this.$store.dispatch('beosStore/getSnapshots');
+      this.$q.notify({
+        message: 'Snapshot data has been loaded',
+        position: 'top',
+        color: 'green',
+        icon: 'tag_faces',
+        timeout: 1000,
+      });
+    },
     getData() {
-      this.$axios
-        .get(`../data/${this.selected.value}`)
-        .then((res) => {
-          const { data } = res;
-          this.$store.dispatch('beosStore/loadData', data);
-          this.$q.notify('Data has been loaded');
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$q.notify('Data failed to Load', error);
-        });
+      this.$store.dispatch('beosStore/getSnapshot', { value: '5ce56041fb6fc01bf23a555d' });
+      this.$store.dispatch('beosStore/getSnapshots');
+      this.$q.notify({
+        message: 'Snapshot data has been loaded',
+        position: 'top',
+        color: 'green',
+        icon: 'tag_faces',
+        timeout: 1000,
+      });
     },
   },
+  async created() {
+    await this.$store.dispatch('beosStore/getSnapshots');
+  },
   mounted() {
-    this.$axios
-      .get('../data/index.json')
-      .then((res) => {
-        this.options = res.data.options;
-      })
-      .catch(error => console.log(error));
+    if (!this.snapshot) {
+      this.getData();
+    }
   },
 };
 </script>

@@ -9,4 +9,20 @@ export default {
     snapshotDate: '',
     numberAccounts: 0,
   },
+  loading: null,
+  snapshots: [],
+  snapshot: {
+    allBalances: [
+      {
+        account: '',
+        balance: '',
+        bts: '',
+      },
+      {
+        account: '',
+        balance: '',
+        bts: '',
+      },
+    ],
+  },
 };
