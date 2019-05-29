@@ -9,10 +9,10 @@
     >
       <q-toolbar>
         <q-toolbar-title>
-          BEOS Rainfall Summary
+          BEOS Dashboard
         </q-toolbar-title>
 
-        <div>v1.0.0 alpha</div>
+        <div>v1.1.0 alpha</div>
       </q-toolbar>
     </q-header>
 
@@ -69,6 +69,7 @@ export default {
       leftDrawerOpen: this.$q.platform.is.desktop,
       navs: [
         { icon: 'ion-rainy', label: 'Summary', to: '/' },
+        { icon: 'ion-wallet', label: 'My Account', to: 'myaccount' },
         { icon: 'history', label: 'History', to: 'history' },
         { icon: 'ion-reverse-camera', label: 'Snapshots', to: 'snapshots' },
       ],

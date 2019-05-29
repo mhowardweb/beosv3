@@ -57,6 +57,10 @@ export function updateAllBalances({ commit }, data) {
   commit('updateAllBal', data);
 }
 
+export function updateAccount({ commit }, data) {
+  commit('updateAccount', data);
+}
+
 export function loadData({ commit }, data) {
   commit('loadData', data);
 }

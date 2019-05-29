@@ -12,9 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.5.0",
+    "axios": "^0.18.0",
     "dotenv": "^8.0.0",
+    "eosjs": "^20.0.0",
     "graphql": "^14.3.0",
     "mongoose": "^5.5.10",
+    "node-fetch": "^2.6.0",
     "nodemon": "^1.19.0"
   },
   "devDependencies": {

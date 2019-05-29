@@ -29,7 +29,83 @@ type BtsBalance {
   bts: String!
 }
 
+type Network {
+  used: Int!
+  available: String!
+  max: String!
+}
+
+type Permission {
+  perm_name: String!
+  parent: String!
+  required_auth: [String]
+}
+type Resources {
+  owner: String!
+  net_weight: String!
+  cpu_weight: String!
+  ram_bytes: Int!
+}
+
+type Bandwidth {
+  from: String!
+  to: String!
+  net_weight: String!
+  cpu_weight: String!
+  refund_request: String
+}
+
+type Voter {
+  owner: String!
+  proxy: String!
+  producers: [String]
+  staked: String!
+  last_vote_weight: String!
+  proxied_vote_weight: String!
+  is_proxy: Boolean!
+  reserved1: Int!
+  reserved2: Int!
+  reserved3: String!
+}
+
+type Account {
+  account_name: String!
+  head_block_num: Int!
+  head_block_time: String!
+  privileged: Boolean!
+  last_code_update: String!
+  created: String!
+  ram_quota: String!
+  net_weight: String!
+  cpu_weight: String!
+  net_limit: Network!
+  cpu_limit: Network!
+  ram_usage: Int!
+  permissions: [Permission]
+  total_resources: Resources!
+  self_delegated_bandwidth: Bandwidth!
+  voter_info: Voter!
+}
+
+type ChainInfo {
+  server_version: String!
+  chain_id: String!
+  head_block_num: Int!
+  last_irreversible_block_num: Int!
+  last_irreversible_block_id: String!
+  head_block_id: String!
+  head_block_time: String!
+  head_block_producer: String!
+  virtual_block_cpu_limit: Int!
+  virtual_block_net_limit: Int!
+  block_cpu_limit: Int!
+  block_net_limit: Int!
+  server_version_string: String!
+}
+
 type Query {
   getSnapshots: [Snapshot]
   getSnapshot(snapshotId: ID!): Snapshot
+  getAccount(accountN: String!): Account
+  getChainInfo: ChainInfo
 }

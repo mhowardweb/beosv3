@@ -22,6 +22,10 @@ export function getBeosBalances(state) {
   return state.data.beosBalances;
 }
 
+export function getAccount(state) {
+  return state.data.account;
+}
+
 export function getBeosBalancesTotal(state) {
   return state.snapshot.beosDistributed;
 }

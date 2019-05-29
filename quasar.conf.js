@@ -53,6 +53,8 @@ module.exports = function (ctx) {
         'QTab',
         'QRouteTab',
         'QSelect',
+        'QAvatar',
+        'QInput',
       ],
 
       directives: ['Ripple'],
