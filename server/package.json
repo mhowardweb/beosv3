@@ -16,7 +16,7 @@
     "dotenv": "^8.0.0",
     "eosjs": "^20.0.0",
     "graphql": "^14.3.0",
-    "mongoose": "^5.5.10",
+    "mongoose": "^5.7.5",
     "node-fetch": "^2.6.0",
     "nodemon": "^1.19.0"
   },
