@@ -17,7 +17,7 @@
     "eosjs": "^20.0.0",
     "graphql": "^14.3.0",
     "mongoose": "^5.5.10",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "nodemon": "^1.19.0"
   },
   "devDependencies": {
